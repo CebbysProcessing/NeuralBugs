@@ -1,10 +1,12 @@
 class BugStats {
   int maxEnergy;
   int matingTimer;
+  int maxAge;
   
   BugStats() {
     this.maxEnergy = 5000;
     this.matingTimer = 0;
+    this.maxAge = 10000;
   }
   BugStats setMaxEnergy(int n) {
     this.maxEnergy = n;
@@ -12,6 +14,10 @@ class BugStats {
   }
   BugStats setMatingTimer(int n) {
     this.matingTimer = n;
+    return this;
+  }
+  BugStats setMaxAge(int a) {
+    this.maxAge = a;
     return this;
   }
 }
@@ -51,11 +57,13 @@ class Bug {
   float antenaSpred = PI/6;
   
   color bugColor;
-  
-  Bug(boolean load) {
-    this(true, load);
+  Bug(JSONArray parentBrain) {
+    this(true, true, parentBrain, 0.1);
   }
-  Bug(boolean ai, boolean load, JSONArray brainStruct) {
+  Bug(boolean load) {
+    this(true, load, null, 0.1);
+  }
+  Bug(boolean ai, boolean load, JSONArray brainStruct, double mutation) {
     this.stats = new BugStats();
     this.hasAi = ai;
     
@@ -63,29 +71,32 @@ class Bug {
     int outputs = 2;
     int[] layers = {3, 3};
     if(brainStruct != null) mind = new Mind(brainStruct, 0.5);
-    else if(load) mind = new Mind(loadJSONArray("Mind/test2.txt"), 0.5);
+    else if(load) mind = new Mind(loadJSONArray("Mind/test2.txt"), mutation);
     else mind = new Mind(inputs, outputs, layers);
     
     float valD = 1000;
     bugShape = new Rectangle(new Point(random(-valD, valD), random(-valD, valD)), bugWidth, bugHeight);
+    //bugShape = new Rectangle(new Point(0, 0), bugWidth, bugHeight);
     coliderBox = new Rectangle(new Point(), bugShape.getDiagonal());
     bugAntenas = new Line[antenaCount];
   }
   
   private void initSensorBoxes() {
   }
-  
-  void init() { // Todo setting bug size and specs
+  void init() {
+    this.init(bugShape.getCenterPoint(), (int)(this.stats.maxEnergy / 3));
+  }
+  void init(Point pos, float ene) { // Todo setting bug size and specs
     this.initSensorBoxes();
     
-    this.energy = (int)(this.stats.maxEnergy / 3);
+    this.energy = ene;
     this.timeAlive = 0;
     this.timeBugColided = 0;
     this.travelDist = 0;
     this.colidesWithBug = false;
     
-    this.prePos = bugShape.getCenterPoint();
-    this.curPos = bugShape.getCenterPoint();
+    this.prePos = pos;
+    this.curPos = pos;
     
     this.bugColor = color(random(100, 200), random(50, 100), random(10, 50));
     
@@ -100,12 +111,18 @@ class Bug {
       if(random(0, 1) > 0.9) this.mind.updateInput(0);
       this.mind.updateInput(1, this.energy / this.stats.maxEnergy);
       if(this.colidesWithBug) this.mind.updateInput(2);
+      this.mind.updateInput(3, this.timeAlive / this.stats.maxAge);
       // <- TEMP
       
       this.mind.update();
       
       // TODO getting Bug outputs from mind
       // TEMP ->
+      
+      if(this.energy > (this.stats.maxEnergy * 0.8)) {
+        this.offspring(bugEntities);
+        print("Ofspringing\n");
+      }
       double velocity = this.mind.getOutput(0) * this.velocityValue;
       double rotation = this.mind.getOutput(1) * this.rotationValue;
       if(this.colidesWithBug) {
@@ -117,7 +134,7 @@ class Bug {
       if(velocity > this.precision || velocity < - this.precision) {
         float a = this.getRotationAngle();
         Point p0 = this.bugShape.getCenterPoint();
-        Point p1 = new Point((float)(cos(a) * velocity + p0.getX()), (float)(sin(a) * velocity +p0.getY()));
+        Point p1 = new Point((float)(cos(a) * velocity + p0.getX()), (float)(sin(a) * velocity + p0.getY()));
         this.bugShape.setCenterPoint(p1);
         this.energy = this.colidesWithBug ? (float)(this.energy - Math.abs(velocity * 2.0)) : (float)(this.energy - Math.abs(velocity));
       }
@@ -127,6 +144,7 @@ class Bug {
       }
       
       // TODO proper energy system for rewarding
+      this.coliderBox.setCenterPoint(this.bugShape.getCenterPoint());
       timeAlive++;
       updateTravelDistance();
       energy--;
@@ -137,13 +155,14 @@ class Bug {
     return mind.getNeuronStructure(); // TODO Change mind saving string
   }
   
-  void colidedWithBug() {
-    // TODO Some code witch gets executed if bugs are coliding
+  void colidesWithBug(boolean t) {
+    this.colidesWithBug = t;
   }
   
   void colidedWithFood() {
-    this.energy += 500;
-    if(this.energy > this.maxEnergy) this.energy = this.maxEnergy;
+    this.energy += 3000;
+    print(this.energy + "\n");
+    if(this.energy > this.stats.maxEnergy) this.energy = this.stats.maxEnergy;
     foodAten++;
   }
   
@@ -157,20 +176,25 @@ class Bug {
   }
   
   private void offspring(ArrayList<Bug> bugs) {
-    Bug child = new Bug();
-    bugs.add();
+    Bug child;
+    child = new Bug(this.getNeuronStructure());
+    child.init(this.curPos, this.stats.maxEnergy * 0.3);
+    this.energy -= this.stats.maxEnergy * 0.3;
+    bugs.add(child);
   }
   
   
   
   boolean isAlive() {
-    return energy > 0;
+    return this.energy > 0 && this.timeAlive < this.stats.maxAge;
   }
   Rectangle getBugShape() {
     return bugShape;
   }
   Rectangle getCollisionBox() {
-    return coliderBox;
+    Rectangle box = new Rectangle(this.coliderBox);
+    box.setCenterPoint(this.bugShape.getCenterPoint());
+    return box;
   }
   color getBugColor() {
     return bugColor;

@@ -1,7 +1,7 @@
 class Game {
   
-  final int maxBugCount = 50;
-  final int maxFoodCount = 600;
+  final int maxBugCount = 10;
+  final int maxFoodCount = 1000;
   
   private float mutationRate = 0.01;
   
@@ -28,7 +28,7 @@ class Game {
     bugHandler.update();
     if(!(bugHandler.getEntityCount() > 0)) {
       bugHandler.repopulate();
-      foodHandler.regrow();
+      //foodHandler.regrow();
     }
   }
   

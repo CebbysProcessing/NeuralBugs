@@ -78,10 +78,11 @@ class BugHandler {
         if(i != j) {
           Bug bug2 = bugs.get(j);
           if(rectangleRectangle2d(bug1.getCollisionBox(), bug2.getCollisionBox())) {
-            bug1.colidedWithBug();
+            bug1.colidesWithBug(true);
             break;
           }
         }
+        bug1.colidesWithBug(false);
       }
       
       // Food colision detection

@@ -24,7 +24,7 @@ class GameRenderer {
       foods.compose(game.foodHandler.getFood(i));
     }
     for(int i = 0; i < game.bugHandler.getEntityCount(); i++) {
-      bugs.compose(game.bugHandler.getBug(i), false);
+      bugs.compose(game.bugHandler.getBug(i), true);
     }
   }
 
@@ -137,6 +137,8 @@ class BugRenderer {
       vertex(x + coliderW, y + coliderH, 0);
       vertex(x - coliderW, y + coliderH, 0);
       endShape(CLOSE);
+      
+      
     }
   }
   

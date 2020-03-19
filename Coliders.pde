@@ -117,6 +117,12 @@ public boolean pointRectangle2d(Point _p, Rectangle _r) {
 public boolean rectangleRectangle2d(Rectangle _r0, Rectangle _r1) {
   Point b0 = _r0.getCenterPoint();
   Point b1 = _r1.getCenterPoint();
+  //print("rect test\n");
+  //print("b0 ? b1 = " + (b0.getX() + _r0.getWidth()/2) + " >= " + (b1.getX() - _r1.getWidth()/2) + "\n");
+  //print("b0 ? b1 = " + (b0.getX() - _r0.getWidth()/2) + " <= " + (b1.getX() + _r1.getWidth()/2) + "\n");
+  //print("b0 ? b1 = " + (b0.getY() + _r0.getHeight()/2) + " >= " + (b1.getY() - _r1.getHeight()/2) + "\n");
+  //print("b0 ? b1 = " + (b0.getY() - _r0.getHeight()/2) + " <= " + (b1.getY() + _r1.getHeight()/2) + "\n");
+  
   return b0.getX() + _r0.getWidth()/2 >= b1.getX() - _r1.getWidth()/2 &&
          b0.getX() - _r0.getWidth()/2 <= b1.getX() + _r1.getWidth()/2 &&
          b0.getY() + _r0.getHeight()/2 >= b1.getY() - _r1.getHeight()/2 &&
@@ -355,6 +361,9 @@ class Rectangle {
   private Point rectCenter;
   private float rectWidth, rectHeight;
    
+  Rectangle(Rectangle r) {
+    this(r.getCenterPoint(), r.getWidth(), r.getHeight());
+  }
   Rectangle(float _w) {
     this(_w, _w);
   }
