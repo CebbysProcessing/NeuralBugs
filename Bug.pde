@@ -2,6 +2,7 @@ class BugStats {
   int maxEnergy;
   int matingTimer;
   int maxAge;
+  // temp
   
   BugStats() {
     this.maxEnergy = 5000;
