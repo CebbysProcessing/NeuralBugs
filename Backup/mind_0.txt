@@ -1,0 +1,226 @@
+//class Mind {
+  
+//  final int inputCount = 6;
+//  Neuron[] input = new Neuron[inputCount];
+//  float[] inputValues = new float[inputCount];
+  
+//  final int layerElementCount = 4;
+//  final int layerCount = 3;
+//  Neuron[] layer = new Neuron[layerElementCount * layerCount];
+  
+//  final int outputCount = 4;
+//  Neuron[] output = new Neuron[outputCount];
+  
+//  // itl = input to layer
+//  // ltl = layer to layer
+//  // lto = layer to output
+//  float[] itlChildValues = new float[layerElementCount * inputCount];
+//  float[] ltlChildValues = new float[layerElementCount * layerElementCount * (layerCount - 1)];
+//  float[] ltoChildValues = new float[outputCount * layerElementCount];
+  
+//  JSONArray mindData;
+  
+//  void loadMind() {
+//  }
+  
+//  JSONArray getMind() {
+//    return mindData;
+//  }
+  
+//  void init() {
+//    mindData = new JSONArray();
+//    initNeurons();
+//    initNeuronValues();
+//    initNeuronChilds();
+//  }
+  
+//  private void initNeuronChilds() {
+//    // Neuron child setup
+//    for(int i = 0; i < input.length; i++) for(int j = 0; j < layerElementCount; j++) {
+//      input[i].addChildNeuron(layer[j], itlChildValues[i * layerElementCount + j]);
+//    }
+//    int valIndex = 0;
+//    for(int i = 0; i < layerCount - 1; i++) for(int j = 0; j < layerElementCount; j++) for(int k = 0; k < layerElementCount; k++) {
+//        layer[i * layerElementCount + j].addChildNeuron(layer[(i + 1) * layerElementCount + k], ltlChildValues[valIndex]);
+//        valIndex++;
+//    }
+//    for(int i = 0; i < layerElementCount; i++) for(int j = 0; j < outputCount; j++) {
+//      int index = layer.length - layerElementCount;
+//      layer[index + i].addChildNeuron(output[j], ltoChildValues[i * outputCount + j]);
+//    }
+//  }
+  
+//  private void initNeuronValues() {
+//    // Neuron value init
+//    float maxVal = 0.05; // DEBUG
+//    for(int i = 0; i < inputValues.length; i++) {
+//      inputValues[i] = random(0, maxVal);
+//    }
+//    for(int i = 0; i < itlChildValues.length; i++) {
+//      itlChildValues[i] = random(0, maxVal);
+//    }
+//    for(int i = 0; i < ltlChildValues.length; i++) {
+//      ltlChildValues[i] = random(0, maxVal);
+//    }
+//    for(int i = 0; i < ltoChildValues.length; i++) {
+//      ltoChildValues[i] = random(0, maxVal);
+//    }
+//  }
+  
+//  private void initNeurons() {
+    
+//    // Neuron init
+//    for(int i = 0; i < input.length; i++) {
+//      input[i] = new Neuron();
+//      input[i].init();
+//    }
+//    for(int i = 0; i < layer.length; i++) {
+//      layer[i] = new Neuron();
+//      layer[i].init();
+//    }
+//    for(int i = 0; i < output.length; i++) {
+//      output[i] = new Neuron();
+//      output[i].init();
+//    }
+//  }
+  
+//  void update() {
+//  }
+  
+//  void updateInput(int _i) {
+//    if((_i < 0) || (_i > inputCount - 1)) _i = 0;
+//    else input[_i].update(inputValues[_i]);
+//  }
+  
+//  float[] getOutputs() {
+//    float[] out = new float[outputCount];
+//    for(int i = 0; i < outputCount; i++) {
+//      out[i] = output[i].getStrength();
+//    }
+//    return out;
+//  }
+  
+//  void updateMindData() {
+//    JSONObject data = new JSONObject();
+//    for(int i = 0; i < inputValues.length; i++) {
+//      data.setFloat(Integer.toString(i), inputValues[i]);
+//    }
+//    mindData.setJSONObject(0, data);
+//    data = new JSONObject();
+//    for(int i = 0; i < itlChildValues.length; i++) {
+//      data.setFloat(Integer.toString(i), itlChildValues[i]);
+//    }
+//    mindData.setJSONObject(1, data);
+//    data = new JSONObject();
+//    for(int i = 0; i < ltlChildValues.length; i++) {
+//      data.setFloat(Integer.toString(i), ltlChildValues[i]);
+//    }
+//    mindData.setJSONObject(2, data);
+//    data = new JSONObject();
+//    for(int i = 0; i < ltoChildValues.length; i++) {
+//      data.setFloat(Integer.toString(i), ltoChildValues[i]);
+//    }
+//    mindData.setJSONObject(3, data);
+//  }
+  
+//  void saveMind(String _s) {
+//    updateMindData();
+//    String s = "inp" + inputCount + "_lay" + layerCount + "_" + layerElementCount + "_out" + outputCount;
+//    saveJSONArray(mindData, "Mind/" + _s + "_" + s + ".txt"); // TODO Better naming
+//  }
+  
+//  // DEBUG
+//  private void printNeuronData() {
+//    print("\ninput ->\n");
+//    printArray(input);
+//    print("\nlayer ->\n");
+//    printArray(layer);
+//    print("\noutput ->\n");
+//    printArray(output);
+//    print("\n");
+    
+    
+//    print("inputValues ->\n");
+//    printArray(inputValues);
+//    print("\n");
+//    print("itlChildValues ->\n");
+//    printArray(itlChildValues);
+//    print("\n");
+//    print("ltlChildValues ->\n");
+//    printArray(ltlChildValues);
+//    print("\n");
+//    print("ltoChildValues ->\n");
+//    printArray(ltoChildValues);
+    
+//    print("\nNeuron structures\n");
+//    print("  Input neurons ->\n");
+//    for(int i = 0; i < input.length; i++) {
+//      print("  Neuron " + input[i] + "\n");
+//      input[i].printNeuronStructure();
+//      print("\n");
+//    }
+//    print("  Layer neurons ->\n");
+//    for(int i = 0; i < layer.length; i++) {
+//      print("  Neuron " + layer[i] + "\n");
+//      layer[i].printNeuronStructure();
+//      print("\n");
+//    }
+//  }
+//}
+
+//class Neuron {
+
+//  boolean active;
+//  HashMap<Integer,Neuron> child;
+//  HashMap<Integer,Float> values;
+//  float signalStrength;
+  
+//  Neuron() {
+//    child = new HashMap<Integer,Neuron>();
+//    values = new HashMap<Integer,Float>();
+//  }
+  
+//  void init() {
+//    active = false;
+//    signalStrength = 0;
+//  }
+  
+//  void update(float _s) {
+//    signalStrength += _s;
+//    for(int i = 0; i < child.size(); i++) {
+//      child.get(i).update(values.get(i));
+//    }
+//    active = true;
+//  }
+  
+//  boolean addChildNeuron(Neuron _n, float _s) {
+//    values.put(child.size(), _s);
+//    child.put(child.size(), _n);
+//    if(values.size() != child.size()) {
+//      print("Incorrect indexing");
+//      return false;
+//    }
+//    return true;
+//  }
+  
+//  float getStrength() {
+//    if(active) {
+//      active = false;
+//      float temp = signalStrength;
+//      signalStrength = 0;
+//      return temp;
+//    } else return 0;
+//  }
+  
+//  boolean isActive() {
+//    return active;
+//  }
+  
+//  // DEBUG
+//  void printNeuronStructure() {
+//    print("    children:\n");
+//    for(int i = 0; i < child.size(); i++) {
+//      print("    [" + i + "] " + child.get(i) + "\tvalue: " + values.get(i) + "\n");
+//    }
+//  }
+//}
